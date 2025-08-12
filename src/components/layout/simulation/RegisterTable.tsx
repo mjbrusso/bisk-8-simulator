@@ -18,25 +18,24 @@ function RegisterTable({ file, isa }: RegisterTableProps) {
 
     if (register.name === "HLT") {
       return (
-        "Halted " +
-        (register.value === 1
-          ? String.fromCodePoint(0x1f7e2)
-          : String.fromCodePoint(0x1f534))
+       (register.value === 1
+          ? String.fromCodePoint(0x1f534)
+          : String.fromCodePoint(0x26AB))
       );
     }
 
     if (register.name === "PSR") {
       const sinal =
         register.value & 0b10
-          ? String.fromCodePoint(0x1f7e2)
-          : String.fromCodePoint(0x1f534);
+          ? String.fromCodePoint(0x1f534)
+          : String.fromCodePoint(0x26AB)
 
       const zero =
         register.value & 0b01
-          ? String.fromCodePoint(0x1f7e2)
-          : String.fromCodePoint(0x1f534);
+          ? String.fromCodePoint(0x1f534)
+          : String.fromCodePoint(0x26AB)
 
-      return `Sinal ${sinal} Zero ${zero}`;
+      return `SF ${sinal}  ZF ${zero}`;
     }
 
     return (register.value & 0xff)
