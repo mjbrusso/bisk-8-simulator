@@ -79,7 +79,7 @@ function App() {
       }
     } else if (phase === Phase.searchAddress) {
       const length = searchAddress.length;
-      if (cicle == 0) newRtl.push("#Busca do endereço");
+      if (cicle == 0) newRtl.push("#Busca do operando");
 
       newRtl.push(searchAddress[cicle](newRegisters, currentMemory));
 
@@ -194,7 +194,7 @@ function App() {
 
     // Realiza etapas de busca de endereço (instruções de 2 bytes)
     if (instruction.requiresAddress) {
-      newRtl.push("#Busca do endereço");
+      newRtl.push("#");
       searchAddress.forEach((cicle) => {
         newRtl.push(cicle(newRegisters, newMemory));
       });
@@ -440,6 +440,10 @@ function App() {
     setMemory(currentMemory);
   }
 
+  function about(){
+    alert('Bisk-8 Simulator\n\ngithub.com/lfachinetto/bisk-8')
+  }
+
   // Avisa de saída sem salvar
   useEffect(() => {
     unsavedChanges = true;
@@ -507,7 +511,7 @@ function App() {
           <Simulation registers={registers} isa={isa} rtl={rtl} />
         </section>
         <section>
-          <ISAToolbar></ISAToolbar>
+          <ISAToolbar about={about}></ISAToolbar>
           <ISA isa={isa} field={2} />
         </section>
       </main>

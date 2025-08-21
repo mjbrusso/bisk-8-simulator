@@ -49,7 +49,7 @@ function RegisterTable({ file, isa }: RegisterTableProps) {
       <caption>Registradores</caption>
       <thead>
         <tr>
-          <th>Registrador</th>
+          <th>Reg</th>
           <th className={sharedStyles.right}>Bin</th>
           <th>Hex</th>
         </tr>
