@@ -194,7 +194,7 @@ function App() {
 
     // Realiza etapas de busca de endereço (instruções de 2 bytes)
     if (instruction.requiresAddress) {
-      newRtl.push("#");
+      newRtl.push("#Busca do endereço");
       searchAddress.forEach((cicle) => {
         newRtl.push(cicle(newRegisters, newMemory));
       });
