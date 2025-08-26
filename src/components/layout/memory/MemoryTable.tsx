@@ -104,7 +104,7 @@ function MemoryTable({
             <td>
               <input
                 type="text"
-                value={row.toString(2).padStart(8, "0")}
+                value={(row & 0xff).toString(2).padStart(8, "0")}
                 onChange={(e) => handleChange(e, Column.binary, index)}
                 onBlur={() => setCurrentField(undefined)}
                 onFocus={() => setCurrentField(row)}
@@ -113,7 +113,7 @@ function MemoryTable({
             <td>
               <input
                 type="text"
-                value={row.toString(16).padStart(2, "0").toUpperCase()}
+                value={(row & 0xff).toString(16).padStart(2, "0").toUpperCase()}
                 onChange={(e) => handleChange(e, Column.hexa, index)}
                 onBlur={() => setCurrentField(undefined)}
                 onFocus={() => setCurrentField(row)}

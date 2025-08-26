@@ -22,7 +22,7 @@ let cicle: number = 0;
 let inMiddleInst: boolean = false;
 let unsavedChanges: boolean = false;
 
-let fsHandle: FileSystemFileHandle;
+let fsHandle: FileSystemFileHandle | null = null;;
 
 // Variáveis com uso mais frequente que renderização
 let currentMemory = new MemoryModel();
@@ -208,6 +208,7 @@ function App() {
   }
 
   function clear() {
+    fsHandle = null;
     inMiddleInst = false;
     setRegisters(new RegisterFile());
     currentMemory.clear();

@@ -273,7 +273,7 @@ export const jzf = [
   (file: RegisterFile): string => {
     if (file.registers["PSR"].value & 0b01) {
       file.registers["PC"].value = file.registers["MDR"].value;
-      return "Se (ZF==1) PC ← MDR";
+      return "if ZF: PC ← MDR";
     }
     return "";
   },
@@ -285,7 +285,7 @@ export const jsf = [
   (file: RegisterFile): string => {
     if (file.registers["PSR"].value & 0b10) {
       file.registers["PC"].value = file.registers["MDR"].value;
-      return "Se (SF==1) PC ← MDR";
+      return "if SF: PC ← MDR";
     }
     return "";
   },
