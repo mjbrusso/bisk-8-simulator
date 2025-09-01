@@ -25,7 +25,7 @@
 }
 
 .logtable tbody {
-  max-height: calc(100vh - 332px);
-  min-height: calc(100vh - 332px);
+  max-height: calc(100vh - 341px);
+  min-height: calc(100vh - 341px);
   overflow-y: scroll;
 }

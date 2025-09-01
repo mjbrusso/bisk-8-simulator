@@ -1,5 +1,5 @@
 .memorytable tbody {
-  max-height: calc(100vh - 123px);
+  max-height: calc(100vh - 125px);
 }
 
 .memorytable th:nth-child(1),

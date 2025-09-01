@@ -162,6 +162,7 @@ export const mul = [
 ];
 
 // Instrução DIV
+// TODO: Divide by zero???
 // 7 MAR ← MDR
 // 8 MDR ← MEM[MAR]
 // 9 ACC ← ACC / MDR
@@ -179,7 +180,7 @@ export const div = [
       file.registers["ACC"].value / file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC / MDR";
+    return "ACC ← ACC / MDR" + (file.registers["MDR"].value==0 ? " (#Div/0)" : "");
   },
 ];
 

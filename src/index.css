@@ -57,8 +57,8 @@ table caption {
 th,
 td {
   font-family: "Source Code Pro", monospace;
-  font-size: 12px;
-  padding: 5px;
+  font-size: 14px;
+  padding: 4px;
   border-collapse: collapse;
   text-align: center;
   word-wrap: break-word;
@@ -109,7 +109,7 @@ input {
   background: none;
   text-align: center;
   font-family: "Source Code Pro", monospace;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 input:focus {
