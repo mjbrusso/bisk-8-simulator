@@ -305,8 +305,8 @@ export const tst = [
 // 7 HLT ← 1
 export const hlt = [
   (file: RegisterFile): string => {
-    file.registers["HLT"].value = 1;
-    return "HLT ← 1";
+    file.registers["Halted"].value = 1;
+    return "Halted ← 1";
   },
 ];
 

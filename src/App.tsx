@@ -47,7 +47,7 @@ function App() {
   const isa = new InstructionSet();
 
   function runCycleByCycle() {
-    if (registers.registers["HLT"].value === 1) {
+    if (registers.registers["Halted"].value === 1) {
       alert("Halted!");
       return;
     }
@@ -116,7 +116,7 @@ function App() {
   }
 
   function runInstByInst() {
-    if (registers.registers["HLT"].value === 1) {
+    if (registers.registers["Halted"].value === 1) {
       alert("Halted!");
       return;
     }
@@ -176,7 +176,7 @@ function App() {
       setMemory(currentMemory);
       // Mostra apenas 100 últimos passos
       setRtl(newRtl.slice(-100));
-    } while (newRegisters.registers["HLT"].value !== 1 && currentRunning);
+    } while (newRegisters.registers["Halted"].value !== 1 && currentRunning);
   }
 
   function runInstruction(

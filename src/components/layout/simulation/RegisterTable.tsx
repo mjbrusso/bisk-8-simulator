@@ -16,7 +16,7 @@ function RegisterTable({ file, isa }: RegisterTableProps) {
       return instruction.mnemonic;
     }
 
-    if (register.name === "HLT") {
+    if (register.name === "Halted") {
       return (
        (register.value === 1
           ? String.fromCodePoint(0x1f534)
