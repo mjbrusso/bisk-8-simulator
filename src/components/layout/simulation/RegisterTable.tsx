@@ -34,8 +34,10 @@ function RegisterTable({ file, isa }: RegisterTableProps) {
         register.value & 0b01
           ? String.fromCodePoint(0x1f534)
           : String.fromCodePoint(0x26AB)
+      
+          const nbsp=String.fromCodePoint(0x00A0)
 
-      return `SF ${sinal}  ZF ${zero}`;
+      return `SF${nbsp}${sinal} ZF${nbsp}${zero}`;
     }
 
     return (register.value & 0xff)

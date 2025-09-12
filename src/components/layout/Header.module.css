@@ -10,7 +10,7 @@ header h1 {
 
 .leftActions {
   display: flex;
-  gap: 10px;
+  gap: 7px;
 }
 
 .button {
@@ -30,7 +30,7 @@ header h1 {
 
 .rightActions {
   display: flex;
-  gap: 10px;
+  gap: 7px;
 }
 
 .circleConnected {

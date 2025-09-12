@@ -442,7 +442,7 @@ function App() {
   }
 
   function about(){
-    alert('Bisk-8 Simulator\n\nVersão 0.3.4\ngithub.com/lfachinetto/bisk-8')
+    alert('Bisk-8 Simulator\n\nVersão 0.3.6\ngithub.com/lfachinetto/bisk-8')
   }
 
   // Avisa de saída sem salvar

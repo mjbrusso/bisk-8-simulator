@@ -86,14 +86,18 @@ main {
 }
 
 section {
-  flex: 1;
-  display: flex;
+  flex: 4; 
   flex-direction: column;
   border-right: 1px solid gray;
 }
 
+section:first-child {
+  flex: 2;
+}
+
 section:last-child {
   border-right: none;
+  flex: 6;
 }
 
 /* Topo de cada coluna */

@@ -9,22 +9,22 @@ import RegisterFile from "../models/registerFile";
 export const searchInstruction = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["PC"].value;
-    return "MAR ← PC";
+    return formatLogLine("MAR ← PC", "MARw, PCr");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     // Se PC chegou ao fim, volta para o início
     if (file.registers["PC"].value === 2 ** file.registers["PC"].bitLength - 1)
       file.registers["PC"].value = 0;
     else file.registers["PC"].value += 1;
-    return "PC ← PC + 1";
+    return formatLogLine("PC ← PC + 1", "PC+");
   },
   (file: RegisterFile): string => {
     file.registers["IR"].value = file.registers["MDR"].value & 0x0f;
-    return "IR ← MDR";
+    return formatLogLine("IR ← MDR", "MDRr, IRw");
   },
 ];
 
@@ -35,25 +35,25 @@ export const searchInstruction = [
 export const searchAddress = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["PC"].value;
-    return "MAR ← PC";
+    return formatLogLine("MAR ← PC", "PCr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     // Se PC chegou ao fim, volta para o início
     if (file.registers["PC"].value === 2 ** file.registers["PC"].bitLength)
       file.registers["PC"].value = 0;
     else file.registers["PC"].value += 1;
-    return "PC ← PC + 1";
+    return formatLogLine("PC ← PC + 1", "PC+");
   },
 ];
 
 // Instrução NOP
 export const nop = [
   (): string => {
-    return "-";
+    return formatLogLine("-");
   },
 ];
 
@@ -64,15 +64,15 @@ export const nop = [
 export const lda = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
-    file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    file.registers["MDR"].value = toSigned8Bit(memory.data[file.registers["MAR"].value]);
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = file.registers["MDR"].value;
-    return "ACC ← MDR";
+    return formatLogLine("ACC ← MDR", "MDRr, ACCw");
   },
 ];
 
@@ -83,15 +83,15 @@ export const lda = [
 export const sta = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile): string => {
     file.registers["MDR"].value = file.registers["ACC"].value;
-    return "MDR ← ACC";
+    return formatLogLine("MDR ← ACC", "ACCr, MDRw");
   },
   (file: RegisterFile, memory: Memory): string => {
-    memory.data[file.registers["MAR"].value] = file.registers["MDR"].value;
-    return "MEM[MAR] ← MDR";
+    memory.data[file.registers["MAR"].value] = toSigned8Bit(file.registers["MDR"].value);
+    return formatLogLine("MEM[MAR] ← MDR", "CS, W, MDRrx");
   },
 ];
 
@@ -102,18 +102,18 @@ export const sta = [
 export const add = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value + file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC + MDR";
+    return formatLogLine("ACC ← ACC + MDR", "MDRr, ULAop=add, ACCwc");
   },
 ];
 
@@ -124,18 +124,18 @@ export const add = [
 export const sub = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value - file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC - MDR";
+    return formatLogLine("ACC ← ACC - MDR", "MDRr, ULAop=sub, ACCwc");
   },
 ];
 
@@ -146,18 +146,18 @@ export const sub = [
 export const mul = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value * file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC * MDR";
+    return formatLogLine("ACC ← ACC * MDR", "MDRr, ULAop=mul, ACCwc");
   },
 ];
 
@@ -169,18 +169,18 @@ export const mul = [
 export const div = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value / file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC / MDR" + (file.registers["MDR"].value==0 ? " (#Div/0)" : "");
+    return formatLogLine("ACC ← ACC / MDR" + (file.registers["MDR"].value==0 ? " !Div/0" : ""), "MDRr, ULAop=div, ACCwc");
   },
 ];
 
@@ -190,7 +190,7 @@ export const not = [
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(~file.registers["ACC"].value);
     testFlags(file);
-    return "ACC ← ~ACC";
+    return formatLogLine("ACC ← ~ACC", "ULAop=not, ACCwc");
   },
 ];
 
@@ -201,17 +201,17 @@ export const not = [
 export const and = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value =
       file.registers["ACC"].value & file.registers["MDR"].value;
     testFlags(file);
-    return "ACC ← ACC & MDR";
+    return formatLogLine("ACC ← ACC & MDR", "MDRr, ULAop=and, ACCwc");
   },
 ];
 
@@ -222,18 +222,18 @@ export const and = [
 export const or = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value | file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC | MDR";
+    return formatLogLine("ACC ← ACC | MDR", "MDRr, ULAop=or, ACCwc");
   },
 ];
 
@@ -244,18 +244,27 @@ export const or = [
 export const xor = [
   (file: RegisterFile): string => {
     file.registers["MAR"].value = file.registers["MDR"].value;
-    return "MAR ← MDR";
+    return formatLogLine("MAR ← MDR", "MDRr, MARw");
   },
   (file: RegisterFile, memory: Memory): string => {
     file.registers["MDR"].value = memory.data[file.registers["MAR"].value];
-    return "MDR ← MEM[MAR]";
+    return formatLogLine("MDR ← MEM[MAR]", "CS, R, MDRwx");
   },
   (file: RegisterFile): string => {
     file.registers["ACC"].value = toSigned8Bit(
       file.registers["ACC"].value ^ file.registers["MDR"].value
     );
     testFlags(file);
-    return "ACC ← ACC ^ MDR";
+    return formatLogLine("ACC ← ACC ^ MDR", "MDRr, ULAop=xor, ACCwc");
+  },
+];
+
+// Instrução TST
+// 7 _ ← AC
+export const tst = [
+  (file: RegisterFile): string => {
+    testFlags(file);
+    return formatLogLine("ACC ← ACC", "ULAop=tst, ACCwc");
   },
 ];
 
@@ -264,7 +273,7 @@ export const xor = [
 export const jmp = [
   (file: RegisterFile): string => {
     file.registers["PC"].value = file.registers["MDR"].value;
-    return "PC ← MDR";
+    return formatLogLine("PC ← MDR", "MDRr, PCw");
   },
 ];
 
@@ -274,9 +283,9 @@ export const jzf = [
   (file: RegisterFile): string => {
     if (file.registers["PSR"].value & 0b01) {
       file.registers["PC"].value = file.registers["MDR"].value;
-      return "if ZF: PC ← MDR";
+      return formatLogLine("if ZF: PC ← MDR", "MDRr, PCw");
     }
-    return "";
+    return formatLogLine("", "");
   },
 ];
 
@@ -286,27 +295,20 @@ export const jsf = [
   (file: RegisterFile): string => {
     if (file.registers["PSR"].value & 0b10) {
       file.registers["PC"].value = file.registers["MDR"].value;
-      return "if SF: PC ← MDR";
+      return formatLogLine("if SF: PC ← MDR", "MDRr, PCw");
     }
-    return "";
+    return formatLogLine("", "");
   },
 ];
 
-// Instrução TST
-// 7 _ ← AC
-export const tst = [
-  (file: RegisterFile): string => {
-    testFlags(file);
-    return "_ ← AC";
-  },
-];
+
 
 // Instrução HLT
 // 7 HLT ← 1
 export const hlt = [
   (file: RegisterFile): string => {
     file.registers["Halted"].value = 1;
-    return "Halted ← 1";
+    return formatLogLine("Halted ← 1", "");
   },
 ];
 
@@ -330,4 +332,8 @@ function testFlags(file: RegisterFile) {
 function toSigned8Bit(value: number) {
   const maskedValue = value & 0xff; // Aplica a máscara de 8 bits
   return maskedValue > 127 ? maskedValue - 256 : maskedValue; // Converte para complemento de 2
+}
+
+function formatLogLine(rtl: string, controlLines: string=""){
+  return rtl.padEnd(16, ' ') + "｜ " + controlLines; 
 }

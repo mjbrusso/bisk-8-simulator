@@ -79,7 +79,7 @@ function MemoryTable({
       <caption>Memória</caption>
       <thead>
         <tr>
-          <th>Endereço</th>
+          <th>End</th>
           <th>Bin</th>
           <th>Hex</th>
         </tr>
