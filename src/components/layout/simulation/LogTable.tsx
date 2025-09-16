@@ -29,7 +29,7 @@ function LogTable({ rtlLog }: LogTableProps) {
             <React.Fragment key={i}>
               <tr ref={isLast ? lastRowRef : undefined}>
                 <td className={isComment ? styles.title : ""}>
-                  {isComment ? rtl.slice(1) + ":" : rtl}
+                  {isComment ? rtl.slice(1) : rtl}
                 </td>
               </tr>
             </React.Fragment>

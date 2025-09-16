@@ -6,24 +6,28 @@
   max-height: calc(100vh - 127px);
 }
 
+.ISAtable th{
+  text-align: center;
+}
+
 .ISAtable th:nth-child(1),
 .ISAtable td:nth-child(1) {
-  width: 14%;
+  width: 7ch;
 }
 
 .ISAtable th:nth-child(2),
 .ISAtable td:nth-child(2) {
-  width: 18%;
+  width: 9ch;
 }
 
 .ISAtable th:nth-child(3),
 .ISAtable td:nth-child(3) {
-  width: 7%;
+  width: 4ch;
 }
 
 
 .ISAtable th:nth-child(4),
 .ISAtable td:nth-child(4) {
-  width: 3%;
+  width: 2ch;
 }
 

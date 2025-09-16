@@ -335,5 +335,5 @@ function toSigned8Bit(value: number) {
 }
 
 function formatLogLine(rtl: string, controlLines: string=""){
-  return rtl.padEnd(16, ' ') + "｜ " + controlLines; 
+  return rtl.padEnd(15, ' ') + " ｜ " + controlLines; 
 }
