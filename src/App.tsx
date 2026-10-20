@@ -36,6 +36,9 @@ let reader: ReadableStreamDefaultReader<string> | null = null;
 let writer: WritableStreamDefaultWriter<string> | null = null;
 
 function App() {
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("bisk8-theme") === "dark"
+  );
   const [registers, setRegisters] = useState<RegisterFile>(new RegisterFile());
   const [memory, setMemory] = useState<MemoryModel>(new MemoryModel());
   const [rtl, setRtl] = useState<string[]>([]);
@@ -208,6 +211,7 @@ function App() {
   }
 
   function clear() {
+    cicle = 0;
     fsHandle = null;
     inMiddleInst = false;
     setRegisters(new RegisterFile());
@@ -311,6 +315,7 @@ function App() {
   }
 
   function clearRegisters() {
+    cicle = 0;
     inMiddleInst = false;
     setRegisters(new RegisterFile());
     setRtl([]);
@@ -442,7 +447,15 @@ function App() {
   }
 
   function about(){
-    alert('Bisk-8 Simulator\n\nVersão 0.3.7\ngithub.com/lfachinetto/bisk-8')
+    alert('Bisk-8 Simulator\n\nVersão 0.3.8\ngithub.com/lfachinetto/bisk-8')
+  }
+
+  function toggleTheme() {
+    setDarkMode((current) => {
+      const next = !current;
+      localStorage.setItem("bisk8-theme", next ? "dark" : "light");
+      return next;
+    });
   }
 
   // Avisa de saída sem salvar
@@ -465,7 +478,7 @@ function App() {
   }, [memory]);
 
   return (
-    <>
+    <div id="app" data-theme={darkMode ? "dark" : "light"}>
       <Header
         openConnection={"serial" in navigator ? openConnection : null}
         connected={connected}
@@ -512,11 +525,11 @@ function App() {
           <Simulation registers={registers} isa={isa} rtl={rtl} />
         </section>
         <section>
-          <ISAToolbar about={about}></ISAToolbar>
+          <ISAToolbar about={about} darkMode={darkMode} toggleTheme={toggleTheme} />
           <ISA isa={isa} field={2} />
         </section>
       </main>
-    </>
+    </div>
   );
 }
 

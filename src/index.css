@@ -3,7 +3,39 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Verdana, Geneva, Tahoma, sans-serif
+  font-family: "Source Code Pro", monospace;
+}
+
+:root {
+  color-scheme: light;
+  --page-bg: #efefef;
+  --text: #17191b;
+  --toolbar-bg: #e0e0e0;
+  --toolbar-border: #ccc;
+  --line: #777;
+  --table-heading: rgba(128, 128, 128, 0.089);
+  --button-hover: #a0a0a0;
+  --focus: lightgray;
+  --memory-current-row: lightblue;
+  --log-bg: #000;
+  --log-text: whitesmoke;
+  --log-title: lightgreen;
+}
+
+#app[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #000100;
+  --text: #e5e8e8;
+  --toolbar-bg: #303638;
+  --toolbar-border: #444b4e;
+  --line: #596164;
+  --table-heading: rgba(255, 255, 255, 0.07);
+  --button-hover: #4b5559;
+  --focus: #aab4b7;
+  --memory-current-row: #244451;
+  --log-bg: #171c1e;
+  --log-text: #e5e8e8;
+  --log-title: #a8e6b0;
 }
 
 body {
@@ -12,7 +44,13 @@ body {
 }
 
 #root {
-  background-color: #efefef;
+  background-color: var(--page-bg);
+}
+
+#app {
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text);
 }
 
 
@@ -30,7 +68,7 @@ table thead {
 }
 
 table thead tr{
-  border-top: 1px solid gray;
+  border-top: 1px solid var(--line);
 }
 
 table tbody {
@@ -44,19 +82,18 @@ tr {
   display: table;
   width: 100%;
   table-layout: fixed;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid var(--line);
 }
 
 table caption {
   font-weight: bold;
   margin: 4px;
-  color: #000;
+  color: var(--text);
 }
 
 
 th,
 td {
-  font-family: "Source Code Pro", monospace;
   font-size: 16px;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -71,7 +108,7 @@ td:first-child{
 }
 
 th {
-  background-color: rgba(128, 128, 128, 0.089);
+  background-color: var(--table-heading);
 }
 
 h1,
@@ -89,11 +126,12 @@ main {
 section {
   flex: 6; 
   flex-direction: column;
-  border-right: 1px solid gray;
+  border-right: 1px solid var(--line);
 }
 
 section:first-child {
   flex: 2;
+  min-width: 228px;;
 }
 
 section:last-child {
@@ -102,14 +140,15 @@ section:last-child {
 }
 
 /* Topo de cada coluna */
-section>header {
+menu {
   height: 31px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 2px 10px;
-  background-color: #e0e0e0;
-  border-bottom: 1px solid #ccc;
+  background-color: var(--toolbar-bg);
+  border-bottom: 1px solid var(--toolbar-border);
+  margin: 0;
 }
 
 
@@ -122,8 +161,9 @@ input {
   font-size: 16px;
   padding: 0;
   margin: 0;
+  color: inherit;
 }
 
 input:focus {
-  outline-color: lightgray;
+  outline-color: var(--focus);
 }

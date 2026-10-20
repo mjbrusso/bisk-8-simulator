@@ -94,7 +94,7 @@ function MemoryTable({
             style={{
               backgroundColor:
                 file.registers["PC"].value === index
-                  ? "lightblue"
+                  ? "var(--memory-current-row)"
                   : undefined,
             }}
           >

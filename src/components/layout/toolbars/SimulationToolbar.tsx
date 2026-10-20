@@ -20,7 +20,7 @@ function SimulationToolbar({
   };
 
   return (
-    <header>
+    <menu>
       <div className={styles.leftActions}>
         <button
           className={styles.button}
@@ -50,7 +50,7 @@ function SimulationToolbar({
         </div>
       </div>
       <div className={styles.rightActions}></div>
-    </header>
+    </menu>
   );
 }
 

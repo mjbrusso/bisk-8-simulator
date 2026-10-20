@@ -1,5 +1,5 @@
 header {
-  background-color: gray;
+  background-color: var(--toolbar-bg);
   padding: 5px;
   flex-shrink: 0;
 }
@@ -12,6 +12,8 @@ header h1 {
   display: flex;
   gap: 7px;
 }
+
+/* Serial port
 
 .button {
   font-size: 20px;
@@ -58,3 +60,4 @@ header h1 {
   justify-content: 'space-between';
   gap: 5px;
 }
+  */

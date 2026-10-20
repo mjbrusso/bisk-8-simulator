@@ -1,6 +1,6 @@
 .logtable {
-  background-color: black;
-  color: whitesmoke;
+  background-color: var(--log-bg);
+  color: var(--log-text);
 }
 
 .logtable td {
@@ -12,7 +12,7 @@
 .logtable td.title {
   font-weight: 600 !important;
   text-align: left;
-  color: lightgreen;
+  color: var(--log-title);
   padding-left: 5px !important;
   font-size: inherit;
 }
@@ -26,8 +26,8 @@
 }
 
 .logtable tbody {
-  max-height: calc(100vh - 325px);
-  min-height: calc(100vh - 325px);
+  max-height: calc(100vh - 330px);
+  min-height: calc(100vh - 330px);
   overflow-y: scroll;
 }
 

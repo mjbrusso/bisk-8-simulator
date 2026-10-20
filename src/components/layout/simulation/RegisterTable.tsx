@@ -13,7 +13,8 @@ function RegisterTable({ file, isa }: RegisterTableProps) {
   function registerText(register: Register): string {
     if (register.name == "IR") {
       const instruction = isa.instructions[register.value];
-      return instruction.mnemonic;
+      const hexCode = (register.value & 0x0f).toString(16).toUpperCase()
+      return  `${hexCode} (${instruction.mnemonic})`;
     }
 
     if (register.name === "Halted") {
