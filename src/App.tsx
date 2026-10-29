@@ -447,7 +447,7 @@ function App() {
   }
 
   function about(){
-    alert('Bisk-8 Simulator\n\nVersão 0.3.8\ngithub.com/lfachinetto/bisk-8')
+    alert('Bisk-8 Simulator\n\nVersão 0.4.1\ngithub.com/mjbrusso/bisk-8-simulator\nDev principal: lfachinetto\nDev e mantenedor: mjbrusso')
   }
 
   function toggleTheme() {
