@@ -49,9 +49,17 @@ function App() {
   const [IOEnd, setIOEnd] = useState<number>(0xff);
   const isa = new InstructionSet();
 
-  function runCycleByCycle() {
+  function isCPUHalted(): boolean {
     if (registers.registers["Halted"].value === 1) {
-      alert("Halted!");
+      alert("🔴 Halted!\nNão é possível executar sem reiniciar.\n\nO que você pode fazer:\n  1. Recarregar o programa atual para executar novamente.\n  2. Limpar tudo e digitar um novo programa.\n");
+      return true;
+    }
+
+    return false;
+  }
+
+  function runCycleByCycle() {
+    if (isCPUHalted()) {
       return;
     }
 
@@ -119,8 +127,7 @@ function App() {
   }
 
   function runInstByInst() {
-    if (registers.registers["Halted"].value === 1) {
-      alert("Halted!");
+    if (isCPUHalted()) {
       return;
     }
     const newRegisters = registers.clone();
@@ -142,7 +149,16 @@ function App() {
     return false;
   }
 
+  function stopExecution() {
+    setRunning(false);
+    currentRunning = false;
+  }
+
   async function runAll() {
+    if (isCPUHalted()) {
+      return;
+    }
+
     const newRegisters = new RegisterFile();
     const newRtl: string[] = [];
 
@@ -157,29 +173,32 @@ function App() {
     }
 
     // Ativa flag de executando
-
     setRunning(true);
     currentRunning = true;
 
-    do {
-      const startTime = performance.now();
-      runInstruction(newRegisters, currentMemory, newRtl);
-      const elapsedTime = performance.now() - startTime;
+    try {
+      do {
+        const startTime = performance.now();
+        runInstruction(newRegisters, currentMemory, newRtl);
+        const elapsedTime = performance.now() - startTime;
 
-      const clockPeriod = 1000 / currentClock;
-      const delayTime = clockPeriod - elapsedTime;
+        const clockPeriod = 1000 / currentClock;
+        const delayTime = clockPeriod - elapsedTime;
 
-      // Clock
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.max(0, delayTime))
-      );
+        // Clock
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.max(0, delayTime))
+        );
 
-      // Atualiza estado para refletir na interface
-      setRegisters(newRegisters);
-      setMemory(currentMemory);
-      // Mostra apenas 100 últimos passos
-      setRtl(newRtl.slice(-100));
-    } while (newRegisters.registers["Halted"].value !== 1 && currentRunning);
+        // Atualiza estado para refletir na interface
+        setRegisters(newRegisters);
+        setMemory(currentMemory);
+        // Mostra apenas 100 últimos passos
+        setRtl(newRtl.slice(-100));
+      } while (newRegisters.registers["Halted"].value !== 1 && currentRunning);
+    } finally {
+      stopExecution();
+    }
   }
 
   function runInstruction(
@@ -500,10 +519,7 @@ function App() {
             uploadMemory={uploadMemory}
             save={save}
             runAll={running ? null : runAll}
-            stop={() => {
-              setRunning(false);
-              currentRunning = false;
-            }}
+            stop={stopExecution}
             runInstByInst={inMiddleInst ? null : runInstByInst}
             runCycleByCycle={runCycleByCycle}
           />
