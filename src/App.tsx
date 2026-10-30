@@ -10,6 +10,7 @@ import MemoryToolbar from "./components/layout/toolbars/MemoryToolbar";
 import ISAToolbar from "./components/layout/toolbars/ISAToolbar";
 import MemoryModel from "./models/memory";
 import ISA from "./components/pages/ISA";
+import AboutDialog from "./components/ui/AboutDialog";
 
 enum Phase {
   searchInstruction,
@@ -47,6 +48,7 @@ function App() {
   const [connected, setConnected] = useState(false);
   const [IOBegin, setIOBegin] = useState<number>(0xf0);
   const [IOEnd, setIOEnd] = useState<number>(0xff);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const isa = new InstructionSet();
 
   function isCPUHalted(): boolean {
@@ -465,10 +467,6 @@ function App() {
     setMemory(currentMemory);
   }
 
-  function about(){
-    alert('Bisk-8 Simulator\n\nVersão 0.4.1\ngithub.com/mjbrusso/bisk-8-simulator\nDev principal: lfachinetto\nDev e mantenedor: mjbrusso')
-  }
-
   function toggleTheme() {
     setDarkMode((current) => {
       const next = !current;
@@ -541,10 +539,15 @@ function App() {
           <Simulation registers={registers} isa={isa} rtl={rtl} />
         </section>
         <section>
-          <ISAToolbar about={about} darkMode={darkMode} toggleTheme={toggleTheme} />
+          <ISAToolbar
+            about={() => setAboutOpen(true)}
+            darkMode={darkMode}
+            toggleTheme={toggleTheme}
+          />
           <ISA isa={isa} field={2} />
         </section>
       </main>
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </div>
   );
 }
