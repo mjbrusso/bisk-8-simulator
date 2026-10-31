@@ -8,6 +8,11 @@
   transition: background-color 0.3s ease;
 }
 
+.button :global(.material-symbols-outlined) {
+  color: var(--button-icon);
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
 .button:hover {
   background-color: var(--button-hover);
 }

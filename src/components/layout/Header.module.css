@@ -1,11 +1,12 @@
 header {
-  background-color: var(--toolbar-bg);
   padding: 5px;
   flex-shrink: 0;
 }
 
 header h1 {
   font-size: 1.2em;
+  background-color: var(--heading-accent);
+  color: var(--heading-color);
 }
 
 .leftActions {
