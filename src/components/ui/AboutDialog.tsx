@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { APP_NAME, APP_REPOSITORY, APP_VERSION } from "../../config/app";
+import { APP_BASE_PATH, APP_NAME, APP_REPOSITORY, APP_VERSION } from "../../config/app";
 import styles from "./AboutDialog.module.css";
 
 interface AboutDialogProps {
@@ -49,7 +49,7 @@ function AboutDialog({ open, onClose }: AboutDialogProps) {
 
       <div className={styles.content}>
         <div className={styles.appHeader}>
-          <img src="/bisk-8-icon.svg" alt="Bisk-8 Simulator" className={styles.appIcon} />
+          <img src={`${APP_BASE_PATH}bisk-8-icon.svg`} alt="Bisk-8 Simulator" className={styles.appIcon} />
           <p className={styles.metaStrong}>{APP_NAME}</p>
         </div>
 

@@ -1,3 +1,4 @@
+import { APP_BASE_PATH } from "../../config/app";
 import styles from "./Header.module.css";
 
 interface HeaderProps {
@@ -66,7 +67,7 @@ function Header({
         )}
       </div> */}
       <h1 className={styles.title}>
-        <img src="/bisk-8-icon.svg" alt="Bisk-8 Simulator" className={styles.brandIcon} />
+        <img src={`${APP_BASE_PATH}bisk-8-icon.svg`} alt="Bisk-8 Simulator" className={styles.brandIcon} />
         <span className={styles.titleText}>Bisk-8 Simulator</span>
       </h1>
       <div className={styles.rightActions}>
