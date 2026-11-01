@@ -4,15 +4,15 @@
   color-scheme: light;
   --page-bg: #f3f3f1;
   --text: #1f1f1f;
-  --header-bg: #cfd3ce;
+  --header-bg: #eff5f1;
   --header-border: #9aa0a6;
   --header-brand-bg: #cfd3ce;
   --header-accent: #008656;
-  --caption-bg: #dfe5e1;
+  --caption-bg: #e5efe5;
   --toolbar-bg: #cfd3ce;
   --toolbar-border: #9aa0a6;
   --line: #c5c5c3;
-  --table-heading: #e7e7e5;
+  --table-heading: #e0e0d8;
   --table-row-even: #f0f0ee;
   --table-row-odd: #ffffff;
   --button-hover: #d7d9d5;
@@ -32,7 +32,7 @@
   color-scheme: dark;
   --page-bg: #0d1117;
   --text: #e6edf3;
-  --header-bg: #090d12;
+  --header-bg: #111923;
   --header-border: #30363d;
   --header-brand-bg: #090d12;
   --header-accent: #7ee787;
@@ -164,6 +164,7 @@ table thead {
 
 table thead tr {
   border-top: 1px solid var(--line);
+  background-color: var(-table-heading);
 }
 
 table tbody {

@@ -41,6 +41,7 @@
   list-style: none;
   background: transparent;
   border: none;
+  border-left: 1px solid var(--line);
 }
 
 .toolbarGroup {
