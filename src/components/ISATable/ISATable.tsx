@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import sharedStyles from "../../shared.module.css"
+import sharedStyles from "../shared.module.css"
 import styles from "./ISATable.module.css"
-import InstructionSet from "../../../models/instructionSet";
+import InstructionSet from "../../models/instructionSet";
 
 interface ISATableProps {
   isa: InstructionSet;

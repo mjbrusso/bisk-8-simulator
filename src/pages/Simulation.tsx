@@ -1,7 +1,7 @@
-import RegisterFile from "../../models/registerFile";
-import InstructionSet from "../../models/instructionSet";
-import RegisterTable from "../layout/simulation/RegisterTable";
-import LogTable from "../layout/simulation/LogTable";
+import RegisterFile from "../models/registerFile";
+import InstructionSet from "../models/instructionSet";
+import RegisterTable from "../components/RegisterTable/RegisterTable";
+import LogTable from "../components/LogTable/LogTable";
 
 interface SimulationProps {
   registers: RegisterFile;

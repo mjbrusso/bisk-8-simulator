@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import RegisterFile from "../../../models/registerFile";
+import RegisterFile from "../../models/registerFile";
 import styles from "./MemoryTable.module.css"
-import Memory from "../../../models/memory";
+import Memory from "../../models/memory";
 
 enum Column {
   binary,
@@ -91,12 +91,9 @@ function MemoryTable({
               index === file.registers["PC"].value ? currentRowRef : null
             }
             key={"memory" + index}
-            style={{
-              backgroundColor:
-                file.registers["PC"].value === index
-                  ? "var(--memory-current-row)"
-                  : undefined,
-            }}
+            className={
+              file.registers["PC"].value === index ? styles.currentRow : undefined
+            }
           >
             <td>
               {index.toString(16).padStart(2, "0").toUpperCase()}

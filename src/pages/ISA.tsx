@@ -1,5 +1,5 @@
-import ISATable from "../layout/ISA/ISATable";
-import InstructionSet from "../../models/instructionSet";
+import ISATable from "../components/ISATable/ISATable";
+import InstructionSet from "../models/instructionSet";
 
 interface ISAProps {
   isa: InstructionSet;

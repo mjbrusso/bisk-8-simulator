@@ -1,6 +1,6 @@
-import MemoryModel from "../../models/memory";
-import RegisterFile from "../../models/registerFile";
-import MemoryTable from "../layout/memory/MemoryTable";
+import MemoryModel from "../models/memory";
+import RegisterFile from "../models/registerFile";
+import MemoryTable from "../components/MemoryTable/MemoryTable";
 import { useState } from "react";
 
 interface MemoryProps {

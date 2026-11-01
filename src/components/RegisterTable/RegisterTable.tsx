@@ -1,8 +1,8 @@
 import styles from "./RegisterTable.module.css"
-import sharedStyles from "../../shared.module.css"
-import RegisterFile from "../../../models/registerFile";
-import InstructionSet from "../../../models/instructionSet";
-import Register from "../../../models/register";
+import sharedStyles from "../shared.module.css"
+import RegisterFile from "../../models/registerFile";
+import InstructionSet from "../../models/instructionSet";
+import Register from "../../models/register";
 
 interface RegisterTableProps {
   file: RegisterFile;

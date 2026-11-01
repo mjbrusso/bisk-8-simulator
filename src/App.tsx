@@ -1,16 +1,14 @@
-import Header from "./components/layout/Header";
-import Memory from "./components/pages/Memory";
+import Header from "./components/Header/Header";
+import Memory from "./pages/Memory";
 import { useEffect, useState } from "react";
 import RegisterFile from "./models/registerFile";
 import InstructionSet from "./models/instructionSet";
 import { searchAddress, searchInstruction } from "./services/operations";
-import Simulation from "./components/pages/Simulation";
-import SimulationToolbar from "./components/layout/toolbars/SimulationToolbar";
-import MemoryToolbar from "./components/layout/toolbars/MemoryToolbar";
-import ISAToolbar from "./components/layout/toolbars/ISAToolbar";
+import Simulation from "./pages/Simulation";
+import toolbarStyles from "./components/Toolbar/Toolbar.module.css";
 import MemoryModel from "./models/memory";
-import ISA from "./components/pages/ISA";
-import AboutDialog from "./components/ui/AboutDialog";
+import ISA from "./pages/ISA";
+import AboutDialog from "./components/AboutDialog/AboutDialog";
 
 enum Phase {
   searchInstruction,
@@ -494,6 +492,152 @@ function App() {
     };
   }, [memory]);
 
+  const canStepInstruction = !inMiddleInst;
+
+  const toolbarActions = [
+    {
+      id: "memory-clear",
+      align: "left" as const,
+      element: (
+        <button className={toolbarStyles.button} onClick={clear} title="Limpar">
+          <span className="material-symbols-outlined">delete</span>
+        </button>
+      ),
+    },
+    {
+      id: "memory-upload",
+      align: "left" as const,
+      element: (
+        <button
+          className={toolbarStyles.button}
+          onClick={uploadMemory}
+          title="Abrir arquivo de memória"
+        >
+          <span className="material-symbols-outlined">upload_file</span>
+        </button>
+      ),
+    },
+    {
+      id: "memory-save",
+      align: "left" as const,
+      element: (
+        <button className={toolbarStyles.button} onClick={save} title="Salvar memória">
+          <span className="material-symbols-outlined">save</span>
+        </button>
+      ),
+    },
+    {
+      id: "simulation-reset",
+      align: "left" as const,
+      element: (
+        <button
+          className={toolbarStyles.button}
+          onClick={clearRegisters}
+          title="Resetar registradores"
+        >
+          <span className="material-symbols-outlined">restart_alt</span>
+        </button>
+      ),
+    },
+    {
+      id: "simulation-clock",
+      align: "left" as const,
+      element: (
+        <div className={toolbarStyles.dropdown}>
+          <button className={toolbarStyles.button} title="Alterar clock">
+            <span className="material-symbols-outlined">schedule</span>
+          </button>
+
+          <div className={toolbarStyles.dropdownContent}>
+            {[4100, 2000, 1000, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25].map(
+              (option) => (
+                <a
+                  key={option}
+                  className={option == clock ? toolbarStyles.selected : ""}
+                  onClick={() => {
+                    setClock(option);
+                    currentClock = option;
+                  }}
+                >
+                  {option >= 1000 ? (option / 1000).toLocaleString() : option}
+                  <span> </span>
+                  {option >= 1000 ? "KHz" : "Hz"}
+                </a>
+              )
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "memory-run-all",
+      align: "left" as const,
+      element: running ? (
+        <button className={toolbarStyles.button} onClick={stopExecution} title="Parar">
+          <span className="material-symbols-outlined">stop</span>
+        </button>
+      ) : (
+        <button className={toolbarStyles.button} onClick={runAll} title="Executar tudo">
+          <span className="material-symbols-outlined">play_arrow</span>
+        </button>
+      ),
+    },
+    {
+      id: "memory-step-over",
+      align: "left" as const,
+      element: (
+        <button
+          type="button"
+          className={toolbarStyles.button}
+          onClick={runInstByInst}
+          disabled={!canStepInstruction}
+          title={
+            canStepInstruction
+              ? "Executar instrução por instrução"
+              : "Executar instrução por instrução indisponível"
+          }
+        >
+          <span className="material-symbols-outlined">step_over</span>
+        </button>
+      ),
+    },
+    {
+      id: "memory-step-into",
+      align: "left" as const,
+      element: (
+        <button className={toolbarStyles.button} onClick={runCycleByCycle} title="Executar ciclo por ciclo">
+          <span className="material-symbols-outlined">step_into</span>
+        </button>
+      ),
+    },
+    {
+      id: "theme-toggle",
+      align: "right" as const,
+      element: (
+        <button
+          className={toolbarStyles.button}
+          onClick={toggleTheme}
+          title={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
+          aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
+          aria-pressed={darkMode}
+        >
+          <span className="material-symbols-outlined">
+            {darkMode ? "light_mode" : "dark_mode"}
+          </span>
+        </button>
+      ),
+    },
+    {
+      id: "about",
+      align: "right" as const,
+      element: (
+        <button className={toolbarStyles.button} onClick={() => setAboutOpen(true)} title="Sobre">
+          <span className="material-symbols-outlined">info</span>
+        </button>
+      ),
+    },
+  ];
+
   return (
     <div id="app" data-theme={darkMode ? "dark" : "light"}>
       <Header
@@ -509,18 +653,10 @@ function App() {
           setIOEnd(end);
           currentIOEnd = end;
         }}
+        toolbarActions={toolbarActions}
       />
       <main>
         <section>
-          <MemoryToolbar
-            clear={clear}
-            uploadMemory={uploadMemory}
-            save={save}
-            runAll={running ? null : runAll}
-            stop={stopExecution}
-            runInstByInst={inMiddleInst ? null : runInstByInst}
-            runCycleByCycle={runCycleByCycle}
-          />
           <Memory
             memory={memory}
             setMemory={setMemoryChange}
@@ -528,22 +664,9 @@ function App() {
           />
         </section>
         <section>
-          <SimulationToolbar
-            clearRegisters={clearRegisters}
-            changeClock={(value) => {
-              setClock(value);
-              currentClock = value;
-            }}
-            clock={clock}
-          />
           <Simulation registers={registers} isa={isa} rtl={rtl} />
         </section>
         <section>
-          <ISAToolbar
-            about={() => setAboutOpen(true)}
-            darkMode={darkMode}
-            toggleTheme={toggleTheme}
-          />
           <ISA isa={isa} field={2} />
         </section>
       </main>
