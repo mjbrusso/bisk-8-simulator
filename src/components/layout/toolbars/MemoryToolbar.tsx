@@ -50,17 +50,19 @@ function MemoryToolbar({
             <span className="material-symbols-outlined">stop</span>
           </button>
         )}
-        {runInstByInst ? (
-          <button
-            className={styles.button}
-            onClick={runInstByInst}
-            title="Executar instrução por instrução"
-          >
-            <span className="material-symbols-outlined">step_over</span>
-          </button>
-        ) : (
-          ""
-        )}
+        <button
+          type="button"
+          className={styles.button}
+          onClick={runInstByInst ?? undefined}
+          disabled={!runInstByInst}
+          title={
+            runInstByInst
+              ? "Executar instrução por instrução"
+              : "Executar instrução por instrução indisponível"
+          }
+        >
+          <span className="material-symbols-outlined">step_over</span>
+        </button>
         <button
           className={styles.button}
           onClick={runCycleByCycle}

@@ -48,22 +48,19 @@ function AboutDialog({ open, onClose }: AboutDialogProps) {
       </div>
 
       <div className={styles.content}>
-        <p className={styles.metaStrong}>{APP_NAME}</p>
-        <p className={styles.meta}>Versão {APP_VERSION}</p>
+        <div className={styles.appHeader}>
+          <img src="/bisk-8-icon.svg" alt="Bisk-8 Simulator" className={styles.appIcon} />
+          <p className={styles.metaStrong}>{APP_NAME}</p>
+        </div>
+
         <p className={styles.meta}>
-          <a href={`https://${APP_REPOSITORY}`} target="_blank" rel="noreferrer">
-            {APP_REPOSITORY}
-          </a>
+          Projeto criado como TCC do curso de <a href="https://www.upf.br/itec/curso/engenharia-de-computacao" target="_blank" rel="noreferrer">Engenharia de Computação</a> da <a href="https://www.upf.br/" target="_blank" rel="noreferrer">Universidade de Passo Fundo (UPF)</a>, pelo acadêmico <a href="https://github.com/lfachinetto/" target="_blank" rel="noreferrer">Lucas Fachinetto</a>, orientado pelo prof. <a href="https://github.com/mjbrusso/" target="_blank" rel="noreferrer">Marcos José Brusso</a>.
         </p>
-        <p className={styles.meta}>Criador do projeto:
-          <a href="https://github.com/lfachinetto/" target="_blank" rel="noreferrer">
-            lfachinetto
-          </a>
-        </p>
-        <p className={styles.meta}>Dev e mantenedor:
-          <a href="https://github.com/mjbrusso/" target="_blank" rel="noreferrer">
-            mjbrusso
-          </a>
+
+        <p className={styles.meta}>Versão: {APP_VERSION}</p>
+
+        <p className={styles.meta}>
+          Fontes: <a href={`https://${APP_REPOSITORY}`} target="_blank" rel="noreferrer">{APP_REPOSITORY}</a>
         </p>
 
         <div className={styles.actions}>

@@ -8,6 +8,15 @@
   transition: background-color 0.3s ease;
 }
 
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button:disabled:hover {
+  background-color: var(--toolbar-bg);
+}
+
 .button :global(.material-symbols-outlined) {
   color: var(--button-icon);
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;

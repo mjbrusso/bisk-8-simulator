@@ -49,12 +49,26 @@
   padding: 1rem 1.25rem 1.25rem;
 }
 
+.appHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.appIcon {
+  width: 7rem;
+  height: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
 .meta {
-  margin: 0.25rem 0;
+  margin: 1rem 0 0;
 }
 
 .metaStrong {
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: 1.08rem;
   font-weight: 700;
 }
