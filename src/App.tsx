@@ -288,6 +288,15 @@ function App() {
     unsavedChanges = false;
   }
 
+  async function copyMemory() {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(memory));
+    } catch (error) {
+      alert("Não foi possível copiar a memória para a área de transferência.");
+      console.error("Error copying memory to clipboard:", error);
+    }
+  }
+
   // Função caso navegador não suporte save
   function downloadMemory() {
     // create file in browser
@@ -533,6 +542,20 @@ function App() {
       element: (
         <button className={toolbarStyles.button} onClick={save} title="Salvar memória">
           <span className="material-symbols-outlined">save</span>
+        </button>
+      ),
+    },
+    {
+      id: "memory-copy",
+      align: "left" as const,
+      element: (
+        <button
+          className={toolbarStyles.button}
+          onClick={copyMemory}
+          title="Copiar memória para a área de transferência"
+          aria-label="Copiar memória para a área de transferência"
+        >
+          <span className="material-symbols-outlined">content_copy</span>
         </button>
       ),
     },
