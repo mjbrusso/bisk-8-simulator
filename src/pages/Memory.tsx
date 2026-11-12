@@ -7,9 +7,15 @@ interface MemoryProps {
   memory: MemoryModel;
   setMemory: (memory: MemoryModel) => void;
   file: RegisterFile;
+  onManualMemoryChange: () => void;
 }
 
-function Memory({ memory, setMemory, file }: MemoryProps) {
+function Memory({
+  memory,
+  setMemory,
+  file,
+  onManualMemoryChange,
+}: MemoryProps) {
   const [currentField, setCurrentField] = useState<number | undefined>(
     undefined
   );
@@ -20,6 +26,7 @@ function Memory({ memory, setMemory, file }: MemoryProps) {
       setMemory={setMemory}
       file={file}
       setCurrentField={setCurrentField}
+      onManualMemoryChange={onManualMemoryChange}
     />
   );
 }

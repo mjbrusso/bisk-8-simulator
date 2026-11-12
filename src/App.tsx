@@ -40,6 +40,7 @@ function App() {
   );
   const [registers, setRegisters] = useState<RegisterFile>(new RegisterFile());
   const [memory, setMemory] = useState<MemoryModel>(new MemoryModel());
+  const [manualMemoryModified, setManualMemoryModified] = useState(false);
   const [highlightInstructionRegister, setHighlightInstructionRegister] =
     useState(false);
   const [rtl, setRtl] = useState<string[]>([]);
@@ -239,6 +240,7 @@ function App() {
     cicle = 0;
     fsHandle = null;
     inMiddleInst = false;
+    setManualMemoryModified(false);
     setRegisters(new RegisterFile());
     currentMemory.clear();
     setMemory(currentMemory);
@@ -282,6 +284,7 @@ function App() {
     await writable.write(JSON.stringify(memory));
     await writable.close();
 
+    setManualMemoryModified(false);
     unsavedChanges = false;
   }
 
@@ -303,14 +306,14 @@ function App() {
     // clean up "a" element & remove ObjectURL
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
+    setManualMemoryModified(false);
   }
 
   function uploadMemory() {
-    // Confirma limpeza de estado
     if (
-      (hasState() || memory.data.some((value) => value !== 0)) &&
+      manualMemoryModified &&
       !window.confirm(
-        "Ao fazer upload, os registradores e memória serão resetados. Deseja continuar?"
+        "Ao carregar um arquivo, as modificações feitas na memória que não foram salvas serão perdidas.\nDeseja continuar?"
       )
     ) {
       return;
@@ -329,6 +332,7 @@ function App() {
             const text = e.target?.result as string;
             const newMemory = JSON.parse(text);
             setMemoryChange(new MemoryModel(newMemory.data));
+            setManualMemoryModified(false);
             clearRegisters();
           } catch (e) {
             alert("Ocorreu um erro ao fazer upload do arquivo!");
@@ -667,6 +671,7 @@ function App() {
             memory={memory}
             setMemory={setMemoryChange}
             file={registers}
+            onManualMemoryChange={() => setManualMemoryModified(true)}
           />
         </section>
         <section>

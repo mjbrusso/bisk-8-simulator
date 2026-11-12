@@ -13,13 +13,15 @@ interface MemoryTableProps {
   setMemory: (memory: Memory) => void;
   file: RegisterFile;
   setCurrentField: React.Dispatch<React.SetStateAction<number | undefined>>;
+  onManualMemoryChange: () => void;
 }
 
 function MemoryTable({
   memory,
   setMemory,
   file,
-  setCurrentField
+  setCurrentField,
+  onManualMemoryChange,
 }: MemoryTableProps) {
   // Trata mudanças na tabela de memória
   function onDataTableChange(column: Column, address: number, value: string) {
@@ -35,11 +37,15 @@ function MemoryTable({
         break;
     }
 
+    const newValue =
+      column === Column.binary ? parseInt(value, 2) : parseInt(value, 16);
+    if (memory.data[address] !== newValue) {
+      onManualMemoryChange();
+    }
+
     memory.data = memory.data.map((memoryValue, index) => {
       return index === address
-        ? column === Column.binary
-          ? parseInt(value, 2)
-          : parseInt(value, 16)
+        ? newValue
         : memoryValue;
     });
 
