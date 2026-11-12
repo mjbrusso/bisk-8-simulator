@@ -40,6 +40,8 @@ function App() {
   );
   const [registers, setRegisters] = useState<RegisterFile>(new RegisterFile());
   const [memory, setMemory] = useState<MemoryModel>(new MemoryModel());
+  const [highlightInstructionRegister, setHighlightInstructionRegister] =
+    useState(false);
   const [rtl, setRtl] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
   const [clock, setClock] = useState(1);
@@ -63,6 +65,7 @@ function App() {
       return;
     }
 
+    setHighlightInstructionRegister(true);
     const newRegisters = registers.clone();
     const newRtl: string[] = [...rtl];
     inMiddleInst = true;
@@ -130,6 +133,7 @@ function App() {
     if (isCPUHalted()) {
       return;
     }
+    setHighlightInstructionRegister(false);
     const newRegisters = registers.clone();
     const newRtl: string[] = [...rtl];
 
@@ -171,6 +175,8 @@ function App() {
     ) {
       return;
     }
+
+    setHighlightInstructionRegister(false);
 
     // Ativa flag de executando
     setRunning(true);
@@ -667,7 +673,14 @@ function App() {
           <Simulation registers={registers} isa={isa} rtl={rtl} />
         </section>
         <section>
-          <ISA isa={isa} field={2} />
+          <ISA
+            isa={isa}
+            field={
+              highlightInstructionRegister
+                ? registers.registers["IR"].value
+                : memory.data[registers.registers["PC"].value]
+            }
+          />
         </section>
       </main>
       <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />

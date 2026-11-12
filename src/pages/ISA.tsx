@@ -8,7 +8,7 @@ interface ISAProps {
 
 function ISA({ isa, field }: ISAProps) {
   return (
-    <ISATable isa={isa} field={0} />
+    <ISATable isa={isa} field={field} />
   );
 }
 

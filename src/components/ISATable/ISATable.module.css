@@ -6,6 +6,11 @@
   max-height: calc(100vh - 127px);
 }
 
+.currentRow {
+  background-color: var(--memory-current-row) !important;
+  box-shadow: inset 0 0 0 2px rgba(224, 197, 92, 0.9);
+}
+
 .ISAtable th{
   text-align: center;
 }
@@ -30,4 +35,3 @@
 .ISAtable td:nth-child(4) {
   width: 2ch;
 }
-

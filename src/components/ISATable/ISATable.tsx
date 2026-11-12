@@ -41,7 +41,7 @@ function ISATable({ isa, field }: ISATableProps) {
             <tr
               key={i}
               ref={isCurrent ? isaRef : undefined}
-            // style={{ color: isCurrent ? "blue" : undefined }}
+              className={isCurrent ? styles.currentRow : undefined}
             >
               <td className={sharedStyles.left}>{instruction.mnemonic + (instruction.requiresAddress ? " op" : "")}</td>
               <td>{instruction.getBinOpcode()}</td>
