@@ -1,6 +1,6 @@
 import Header from "./components/Header/Header";
 import Memory from "./pages/Memory";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import RegisterFile from "./models/registerFile";
 import InstructionSet from "./models/instructionSet";
 import { searchAddress, searchInstruction } from "./services/operations";
@@ -9,6 +9,9 @@ import toolbarStyles from "./components/Toolbar/Toolbar.module.css";
 import MemoryModel from "./models/memory";
 import ISA from "./pages/ISA";
 import AboutDialog from "./components/AboutDialog/AboutDialog";
+import memoryImageService, {
+  InvalidMemoryImageError,
+} from "./services/memoryImageService";
 
 enum Phase {
   searchInstruction,
@@ -20,8 +23,6 @@ let phase: Phase = Phase.searchInstruction;
 let cicle: number = 0;
 let inMiddleInst: boolean = false;
 let unsavedChanges: boolean = false;
-
-let fsHandle: FileSystemFileHandle | null = null;
 
 // Variáveis com uso mais frequente que renderização
 let currentMemory = new MemoryModel();
@@ -238,7 +239,7 @@ function App() {
 
   function clear() {
     cicle = 0;
-    fsHandle = null;
+    memoryImageService.clearFileHandle();
     inMiddleInst = false;
     setManualMemoryModified(false);
     setRegisters(new RegisterFile());
@@ -261,103 +262,58 @@ function App() {
   }
 
   async function save() {
-    if (!("showOpenFilePicker" in self)) {
-      downloadMemory();
-      return;
-    }
-
-    if (!fsHandle)
-      fsHandle = await window.showSaveFilePicker({
-        suggestedName: "Bisk-8 Memory " + getCurrentDateTime() + ".json",
-        types: [
-          {
-            description: "Memória do Bisk-8",
-            accept: {
-              "application/json": [".json"],
-            },
-          },
-        ],
-        excludeAcceptAllOption: true,
-      });
-
-    const writable = await fsHandle.createWritable();
-    await writable.write(JSON.stringify(memory));
-    await writable.close();
-
+    await memoryImageService.save(
+      memory,
+      "Bisk-8 Memory " + getCurrentDateTime() + ".json"
+    );
     setManualMemoryModified(false);
     unsavedChanges = false;
   }
 
   async function copyMemory() {
     try {
-      await navigator.clipboard.writeText(JSON.stringify(memory));
+      await memoryImageService.copy(memory);
     } catch (error) {
       alert("Não foi possível copiar a memória para a área de transferência.");
       console.error("Error copying memory to clipboard:", error);
     }
   }
 
-  // Função caso navegador não suporte save
-  function downloadMemory() {
-    // create file in browser
-    const fileName = "Bisk-8 Memory " + getCurrentDateTime();
-    const json = JSON.stringify(memory);
-    const blob = new Blob([json], { type: "application/json" });
-    const href = URL.createObjectURL(blob);
-
-    // create "a" HTLM element with href to file
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = fileName + ".json";
-    document.body.appendChild(link);
-    link.click();
-
-    // clean up "a" element & remove ObjectURL
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
-    setManualMemoryModified(false);
-  }
-
-  function uploadMemory() {
+  const confirmMemoryReplacement = useCallback(() => {
     if (
       manualMemoryModified &&
       !window.confirm(
-        "Ao carregar um arquivo, as modificações feitas na memória que não foram salvas serão perdidas.\nDeseja continuar?"
+        "Ao carregar uma imagem de memória, as modificações feitas na memória que não foram salvas serão perdidas.\nDeseja continuar?"
       )
     ) {
-      return;
+      return false;
     }
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = (e) => {
-          try {
-            const text = e.target?.result as string;
-            const newMemory = JSON.parse(text);
-            setMemoryChange(new MemoryModel(newMemory.data));
-            setManualMemoryModified(false);
-            clearRegisters();
-          } catch (e) {
-            alert("Ocorreu um erro ao fazer upload do arquivo!");
-          }
-        };
+    return true;
+  }, [manualMemoryModified]);
+
+  async function uploadMemory() {
+    if (!confirmMemoryReplacement()) return;
+
+    try {
+      const newMemory = await memoryImageService.upload();
+      if (newMemory) loadMemoryImage(newMemory);
+    } catch (error) {
+      if (error instanceof InvalidMemoryImageError) {
+        alert("O arquivo não contém uma imagem de memória válida.");
+      } else {
+        alert("Ocorreu um erro ao fazer upload do arquivo!");
+        console.error("Error uploading memory:", error);
       }
-    };
-    input.click();
+    }
   }
 
-  function clearRegisters() {
+  const clearRegisters = useCallback(() => {
     cicle = 0;
     inMiddleInst = false;
     setRegisters(new RegisterFile());
     setRtl([]);
-  }
+  }, []);
 
   async function openConnection() {
     if (port) {
@@ -479,10 +435,31 @@ function App() {
     }
   }
 
-  function setMemoryChange(memory: MemoryModel) {
+  const setMemoryChange = useCallback((memory: MemoryModel) => {
     currentMemory = memory;
     setMemory(currentMemory);
-  }
+  }, []);
+
+  const loadMemoryImage = useCallback((newMemory: MemoryModel) => {
+    setMemoryChange(newMemory);
+    setManualMemoryModified(false);
+    clearRegisters();
+  }, [clearRegisters, setMemoryChange]);
+
+  const pasteMemory = useCallback(async () => {
+    if (!confirmMemoryReplacement()) return;
+
+    try {
+      loadMemoryImage(await memoryImageService.paste());
+    } catch (error) {
+      if (error instanceof InvalidMemoryImageError) {
+        alert("A área de transferência não contém uma imagem de memória válida.");
+      } else {
+        alert("Não foi possível acessar a área de transferência.");
+        console.error("Error pasting memory from clipboard:", error);
+      }
+    }
+  }, [confirmMemoryReplacement, loadMemoryImage]);
 
   function toggleTheme() {
     setDarkMode((current) => {
@@ -510,6 +487,32 @@ function App() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [memory]);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      const target = event.target;
+      const isEditable =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.matches("input, textarea, select"));
+
+      if (
+        !(event.ctrlKey || event.metaKey) ||
+        event.key.toLowerCase() !== "v" ||
+        event.altKey ||
+        event.shiftKey ||
+        isEditable
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      void pasteMemory();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [pasteMemory]);
 
   const canStepInstruction = !inMiddleInst;
 
