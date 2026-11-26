@@ -186,26 +186,64 @@ function App() {
 
     try {
       do {
-        const startTime = performance.now();
-        runInstruction(newRegisters, currentMemory, newRtl);
-        const elapsedTime = performance.now() - startTime;
-
-        const clockPeriod = 1000 / currentClock;
-        const delayTime = clockPeriod - elapsedTime;
-
-        // Clock
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.max(0, delayTime))
+        const instructionSteps = runInstructionSteps(
+          newRegisters,
+          currentMemory
         );
+        let step = instructionSteps.next();
+        let cycleStartTime = performance.now();
 
-        // Atualiza estado para refletir na interface
-        setRegisters(newRegisters);
-        setMemory(currentMemory);
-        // Mostra apenas 100 últimos passos
-        setRtl(newRtl.slice(-100));
+        while (!step.done && currentRunning) {
+          newRtl.push(step.value.log);
+
+          if (step.value.isClockCycle) {
+            const elapsedTime = performance.now() - cycleStartTime;
+
+            setRegisters(newRegisters);
+            setMemory(currentMemory);
+            // Mostra apenas 100 últimos passos
+            setRtl(newRtl.slice(-100));
+
+            const clockPeriod = 1000 / currentClock;
+            await new Promise((resolve) =>
+              setTimeout(resolve, Math.max(0, clockPeriod - elapsedTime))
+            );
+
+            if (!currentRunning) {
+              break;
+            }
+          }
+
+          cycleStartTime = performance.now();
+          step = instructionSteps.next();
+        }
       } while (newRegisters.registers["Halted"].value !== 1 && currentRunning);
     } finally {
       stopExecution();
+    }
+  }
+
+  function* runInstructionSteps(
+    newRegisters: RegisterFile,
+    newMemory: MemoryModel
+  ) {
+    yield { log: "#Busca do opcode", isClockCycle: false };
+    for (const cycle of searchInstruction) {
+      yield { log: cycle(newRegisters, newMemory), isClockCycle: true };
+    }
+
+    const instruction = isa.instructions[newRegisters.registers["IR"].value];
+
+    if (instruction.requiresAddress) {
+      yield { log: "#Busca do endereço", isClockCycle: false };
+      for (const cycle of searchAddress) {
+        yield { log: cycle(newRegisters, newMemory), isClockCycle: true };
+      }
+    }
+
+    yield { log: "#Execução da instrução", isClockCycle: false };
+    for (const cycle of instruction.operation) {
+      yield { log: cycle(newRegisters, newMemory), isClockCycle: true };
     }
   }
 
@@ -214,27 +252,9 @@ function App() {
     newMemory: MemoryModel,
     newRtl: string[]
   ) {
-    newRtl.push("#Busca do opcode");
-    // Realiza etapas de busca de instrução
-    searchInstruction.forEach((cicle) => {
-      newRtl.push(cicle(newRegisters, newMemory));
-    });
-
-    const instruction = isa.instructions[newRegisters.registers["IR"].value];
-
-    // Realiza etapas de busca de endereço (instruções de 2 bytes)
-    if (instruction.requiresAddress) {
-      newRtl.push("#Busca do endereço");
-      searchAddress.forEach((cicle) => {
-        newRtl.push(cicle(newRegisters, newMemory));
-      });
+    for (const step of runInstructionSteps(newRegisters, newMemory)) {
+      newRtl.push(step.log);
     }
-
-    newRtl.push("#Execução da instrução");
-    // Executa operação da instrução
-    instruction.operation.forEach((cicle) => {
-      newRtl.push(cicle(newRegisters, newMemory));
-    });
   }
 
   function clear() {
