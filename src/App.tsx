@@ -585,7 +585,7 @@ function App() {
           </button>
 
           <div className={toolbarStyles.dropdownContent}>
-            {[4100, 2000, 1000, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25].map(
+            {[32, 16, 8, 4, 2, 1, 0.5, 0.25].map(
               (option) => (
                 <a
                   key={option}
