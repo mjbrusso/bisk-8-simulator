@@ -264,7 +264,7 @@ function App() {
   async function save() {
     await memoryImageService.save(
       memory,
-      "Bisk-8 Memory " + getCurrentDateTime() + ".json"
+      "Bisk-8 Memory " + getCurrentDateTime() + ".b8"
     );
     setManualMemoryModified(false);
     unsavedChanges = false;

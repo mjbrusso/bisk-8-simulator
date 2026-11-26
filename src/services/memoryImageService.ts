@@ -2,12 +2,12 @@ import MemoryModel from "../models/memory";
 
 export class InvalidMemoryImageError extends Error {
   constructor() {
-    super("A imagem de memória deve conter 256 valores de 8 bits.");
+    super("A imagem de memória deve conter endereços e valores em hexadecimal maiúsculo, com dois dígitos.");
     this.name = "InvalidMemoryImageError";
   }
 }
 
-function parseMemoryImage(contents: string): MemoryModel {
+export function parseMemoryImage(contents: string): MemoryModel {
   let parsed: unknown;
   try {
     parsed = JSON.parse(contents);
@@ -19,20 +19,36 @@ function parseMemoryImage(contents: string): MemoryModel {
     typeof parsed !== "object" ||
     parsed === null ||
     !("data" in parsed) ||
-    !Array.isArray(parsed.data) ||
-    parsed.data.length !== 256 ||
-    !parsed.data.every(
-      (value: unknown): value is number =>
-        typeof value === "number" &&
-        Number.isInteger(value) &&
-        value >= -128 &&
-        value <= 255
-    )
+    typeof parsed.data !== "object" ||
+    parsed.data === null ||
+    Array.isArray(parsed.data)
   ) {
     throw new InvalidMemoryImageError();
   }
 
-  return new MemoryModel(parsed.data);
+  const data = Array<number>(256).fill(0);
+  for (const [address, value] of Object.entries(parsed.data)) {
+    if (!/^[0-9A-F]{2}$/.test(address) || typeof value !== "string" || !/^[0-9A-F]{2}$/.test(value)) {
+      throw new InvalidMemoryImageError();
+    }
+
+    data[Number.parseInt(address, 16)] = Number.parseInt(value, 16);
+  }
+
+  return new MemoryModel(data);
+}
+
+export function serializeMemoryImage(memory: MemoryModel): string {
+  const entries = memory.data.flatMap((value, address) => {
+    const byte = value & 0xff;
+    if (byte === 0) return [];
+
+    const key = address.toString(16).toUpperCase().padStart(2, "0");
+    const hexValue = byte.toString(16).toUpperCase().padStart(2, "0");
+    return [`${JSON.stringify(key)}:${JSON.stringify(hexValue)}`];
+  });
+
+  return `{"data":{${entries.join(",")}}}`;
 }
 
 class MemoryImageService {
@@ -55,7 +71,7 @@ class MemoryImageService {
           {
             description: "Memória do Bisk-8",
             accept: {
-              "application/json": [".json"],
+              "application/json": [".b8"],
             },
           },
         ],
@@ -64,12 +80,12 @@ class MemoryImageService {
     }
 
     const writable = await this.fileHandle.createWritable();
-    await writable.write(JSON.stringify(memory));
+    await writable.write(serializeMemoryImage(memory));
     await writable.close();
   }
 
   download(memory: MemoryModel, fileName: string) {
-    const blob = new Blob([JSON.stringify(memory)], {
+    const blob = new Blob([serializeMemoryImage(memory)], {
       type: "application/json",
     });
     const href = URL.createObjectURL(blob);
@@ -83,7 +99,7 @@ class MemoryImageService {
   }
 
   async copy(memory: MemoryModel) {
-    await navigator.clipboard.writeText(JSON.stringify(memory));
+    await navigator.clipboard.writeText(serializeMemoryImage(memory));
   }
 
   async paste(): Promise<MemoryModel> {
@@ -94,7 +110,7 @@ class MemoryImageService {
     const file = await new Promise<File | null>((resolve) => {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".json";
+      input.accept = ".b8";
       input.onchange = () => resolve(input.files?.[0] ?? null);
       input.addEventListener("cancel", () => resolve(null), { once: true });
       input.click();
